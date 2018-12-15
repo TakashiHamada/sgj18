@@ -88,28 +88,28 @@ public class GameManager : SingletonBehaviour <GameManager> {
 			if (_flags_a [idx]) {
 				// se
 				Debug.Log ("TAKE");
-				PlaySe (1);
+				PlaySe (10);
 				_flags_a [idx] = false;
 			} else if (GetFlagUpCount (0) < MAX_TREASURE) {
 				// se
-				PlaySe (1);
+				PlaySe (9);
 				Debug.Log ("PUT");
 				_flags_a [idx] = true;
 			} else {
 				// se
 				Debug.Log ("False:Max");
-				PlaySe (0);
+				PlaySe (4);
 			}
 		} else {
 			// すでにUP?
 			if (_flags_b [idx - 100]) {
 				// se
-				PlaySe (1);
+				PlaySe (9);
 				Debug.Log ("TAKE");
 				_flags_b [idx - 100] = false;
 			} else  if (GetFlagUpCount (1) < MAX_TREASURE) {
 				// se
-				PlaySe (1);
+				PlaySe (10);
 				Debug.Log ("PUT");
 				_flags_b [idx - 100] = true;
 			} else {
@@ -225,7 +225,7 @@ public class GameManager : SingletonBehaviour <GameManager> {
 			if (IsGameEnd ()) {
 				_state = GameState.GameEnd;
 				Debug.Log ("Move to End");
-				PlaySe (2);
+				PlaySe (11);
 			}
 			// key
 			if (IsInRange (DownKeyCheck ())) {
@@ -261,6 +261,7 @@ public class GameManager : SingletonBehaviour <GameManager> {
 			// clear
 			if (IsGameEnd ()) {
 				_state = GameState.GameEnd;
+				PlaySe (11);
 				Debug.Log ("Move to End");
 			}
 			// key
@@ -338,12 +339,12 @@ public class GameManager : SingletonBehaviour <GameManager> {
 		} else
 		if (_result == 1) {
 			// 成功
-			PlaySe (4);
+			PlaySe (7);
 			Debug.Log ("GOOD");
 		} else
 		if (_result == 2){
 			// 近く
-			PlaySe (3);
+			PlaySe (5);
 			Debug.Log ("NEAR");
 		}
 		if (_last_trun_a_selected) {

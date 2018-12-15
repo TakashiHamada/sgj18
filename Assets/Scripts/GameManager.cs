@@ -5,10 +5,24 @@ using System;
 using UnityEngine.SceneManagement;
 
 public class GameManager : SingletonBehaviour <GameManager> {
+	[SerializeField] private AudioClip [] _clips;
+	[SerializeField] private AudioClip [] _clips_key;
 	private readonly int MAX_TREASURE = 3; // 配置数
 	private GameState _state = GameState.Title;
 	private bool [] _flags_a = new bool [7];
 	private bool [] _flags_b = new bool [7];
+	private bool _last_trun_a_selected = false;
+	private int _result = -1; //
+	private int _sored_key_idx = -1;
+	public int GetStoredKeyIndex () {
+		if (_sored_key_idx > 99) {
+			Debug.Log (_sored_key_idx - 93);
+			return _sored_key_idx - 93;
+		} else {
+			return _sored_key_idx;
+		}
+	}
+	private AudioSource _se;
 	private Dictionary <string, string> _neighborhood_list  = new Dictionary<string, string> () {
         {"R", "DFT"},
         {"T", "RFG"},
@@ -53,7 +67,16 @@ public class GameManager : SingletonBehaviour <GameManager> {
 		for (int idx = 0; idx < valid_keys.Length; idx++) {
 			if (valid_keys [idx] == key [0]) return true;
 		}
+		PlaySe (0);
 		return false;
+	}
+	private void PlaySe (int se_idx) {
+		_se.clip = _clips [se_idx];
+		_se.Play ();
+	}
+	private void PlaySeKey (int se_idx) {
+		_se.clip = _clips_key [se_idx];
+		_se.Play ();
 	}
 	private void PutTreasure (string key) {
 		int idx = GetKeyIndex (key);
@@ -65,28 +88,34 @@ public class GameManager : SingletonBehaviour <GameManager> {
 			if (_flags_a [idx]) {
 				// se
 				Debug.Log ("TAKE");
+				PlaySe (1);
 				_flags_a [idx] = false;
 			} else if (GetFlagUpCount (0) < MAX_TREASURE) {
 				// se
+				PlaySe (1);
 				Debug.Log ("PUT");
 				_flags_a [idx] = true;
 			} else {
 				// se
 				Debug.Log ("False:Max");
+				PlaySe (0);
 			}
 		} else {
 			// すでにUP?
 			if (_flags_b [idx - 100]) {
 				// se
+				PlaySe (1);
 				Debug.Log ("TAKE");
 				_flags_b [idx - 100] = false;
 			} else  if (GetFlagUpCount (1) < MAX_TREASURE) {
 				// se
+				PlaySe (1);
 				Debug.Log ("PUT");
 				_flags_b [idx - 100] = true;
 			} else {
 				// se
 				Debug.Log ("False:Max");
+				PlaySe (0);
 			}
 		}
 	}
@@ -96,6 +125,7 @@ public class GameManager : SingletonBehaviour <GameManager> {
 			Debug.Log ("ERROR");
 			return false;
 		}
+		_sored_key_idx = idx;
 		if (idx < 100) {
 			if (_flags_a [idx]) {
 				// 成功
@@ -134,7 +164,6 @@ public class GameManager : SingletonBehaviour <GameManager> {
 		if (key == "M") return 106;
 		return -1;
 	}
-	
 	public GameState GetGameState () {
 		return _state;
 	}
@@ -143,6 +172,7 @@ public class GameManager : SingletonBehaviour <GameManager> {
 	}
 	void Start () {
 		Debug.Log (_state);
+		_se = GetComponent <AudioSource> ();
 		Clear ();
 	}
 	public void Clear () {
@@ -168,6 +198,7 @@ public class GameManager : SingletonBehaviour <GameManager> {
 			if (Input.GetKey (KeyCode.Space)) {
 				_state = GameState.Preparing;
 				Debug.Log ("Move to Preparing");
+				PlaySe (2);
 			}
 		} else
 		// -------------------------------------------
@@ -179,49 +210,54 @@ public class GameManager : SingletonBehaviour <GameManager> {
 				PutTreasure (DownKeyCheck ());
 			}
 			if (IsCompletedPreparation ()) {
-				_state = GameState.GameStartWait;
 				Debug.Log ("Move to GameStartWait");
+				PlaySe (2);
+
+				StartCoroutine ("GameStartWait");
 			}
-		} else
-		// -------------------------------------------
-		// GameStartWait
-		// -------------------------------------------
-		if (_state == GameState.GameStartWait) {
-			_state = GameState.GameTurnA;
-			Debug.Log ("Move to GameTurnA");
 		} else
 		// -------------------------------------------
 		// GameTurnA
 		// -------------------------------------------
 		if (_state == GameState.GameTurnA) {
+			_last_trun_a_selected = true;
 			// clear
 			if (IsGameEnd ()) {
 				_state = GameState.GameEnd;
 				Debug.Log ("Move to End");
+				PlaySe (2);
 			}
 			// key
 			if (IsInRange (DownKeyCheck ())) {
+
+				int idx = GetKeyIndex (DownKeyCheck ());
+				if (idx > 99) idx -= 93;
+
+
+
+				PlaySeKey (idx);
+
 				if (Hit (DownKeyCheck ())) {
 					// 成功
-					Debug.Log ("GOOD");
+					_result = 1;
 				} else {
 					// 失敗
 					// 近い判定
 					if (IsNear (DownKeyCheck ())) {
-						Debug.Log ("NEAR!");
+						_result = 2;
 					} else {
-						Debug.Log ("NG");
+						_result = 0;
 					}
 				}
-				_state = GameState.GameTurnB;
-				Debug.Log ("Move to GameTurnB");
-				// Debug.Log (DownKeyCheck ());
+				Debug.Log ("Move to GameReactionWait");
+				StartCoroutine ("GameReactionWait");
 			}
 		} else
 		// -------------------------------------------
 		// GameTurnB
 		// -------------------------------------------
 		if (_state == GameState.GameTurnB) {
+			_last_trun_a_selected = false;
 			// clear
 			if (IsGameEnd ()) {
 				_state = GameState.GameEnd;
@@ -229,27 +265,26 @@ public class GameManager : SingletonBehaviour <GameManager> {
 			}
 			// key
 			if (IsInRange (DownKeyCheck ())) {
+
+				int idx = GetKeyIndex (DownKeyCheck ());
+				if (idx > 99) idx -= 93;
+				PlaySeKey (idx);
+				
 				if (Hit (DownKeyCheck ())) {
 					// 成功
-					Debug.Log ("GOOD");
+					_result = 1;
 				} else {
 					// 失敗
 					// 近い判定
 					if (IsNear (DownKeyCheck ())) {
-						Debug.Log ("NEAR!");
+						_result = 2;
 					} else {
-						Debug.Log ("NG");
+						_result = 0;
 					}
 				}
-				_state = GameState.GameTurnA;
-				Debug.Log ("Move to GameTurnA");
-				// Debug.Log (DownKeyCheck ());
+				Debug.Log ("Move to GameReactionWait");
+				StartCoroutine ("GameReactionWait");
 			}
-		} else
-		// -------------------------------------------
-		// GameReactionWait
-		// -------------------------------------------
-		if (_state == GameState.GameReactionWait) {
 		} else
 		// -------------------------------------------
 		// GameEnd
@@ -283,5 +318,40 @@ public class GameManager : SingletonBehaviour <GameManager> {
             }
         }
 		return "";
+	}
+	IEnumerator GameStartWait () {
+		_state = GameState.GameStartWait;
+		yield return new WaitForSeconds (1f);
+		Debug.Log ("Move to GameTurnA");
+		PlaySe (2);
+		_state = GameState.GameTurnA;
+	}
+	IEnumerator GameReactionWait () {
+		_state = GameState.GameReactionWait;
+		yield return new WaitForSeconds (3f);
+		PlaySe (2);
+		// result
+		if (_result == 0) {
+			// 失敗
+			PlaySe (0);
+			Debug.Log ("NG");
+		} else
+		if (_result == 1) {
+			// 成功
+			PlaySe (4);
+			Debug.Log ("GOOD");
+		} else
+		if (_result == 2){
+			// 近く
+			PlaySe (3);
+			Debug.Log ("NEAR");
+		}
+		if (_last_trun_a_selected) {
+			Debug.Log ("Move to GameTurnB");
+			_state = GameState.GameTurnB;
+		} else {
+			Debug.Log ("Move to GameTurnA");
+			_state = GameState.GameTurnA;
+		}
 	}
 }

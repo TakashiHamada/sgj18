@@ -6,10 +6,13 @@ using UnityEngine.SceneManagement;
 
 public class GameManager : SingletonBehaviour <GameManager> {
 	private GameState _state = GameState.Title;
-	private bool [] _flags_a = new bool [3];
-	private bool [] _flags_b = new bool [3];
+	private bool [] _flags_a = new bool [5];
+	private bool [] _flags_b = new bool [5];
 	public GameState GetGameState () {
 		return _state;
+	}
+	void Awake () {
+		SceneManager.LoadScene (1, LoadSceneMode.Additive);
 	}
 	void Start () {
 		Debug.Log (_state);
@@ -35,10 +38,14 @@ public class GameManager : SingletonBehaviour <GameManager> {
 		if (key == "A") {_flags_a [0] = flag; return true;}
 		if (key == "S") {_flags_a [1] = flag; return true;}
 		if (key == "D") {_flags_a [2] = flag; return true;}
+		if (key == "F") {_flags_a [3] = flag; return true;}
+		if (key == "G") {_flags_a [4] = flag; return true;}
 
 		if (key == "Q") {_flags_b [0] = flag; return true;}
 		if (key == "W") {_flags_b [1] = flag; return true;}
 		if (key == "E") {_flags_b [2] = flag; return true;}
+		if (key == "R") {_flags_b [3] = flag; return true;}
+		if (key == "T") {_flags_b [4] = flag; return true;}
 		return false;
 	}
 	void Update () {

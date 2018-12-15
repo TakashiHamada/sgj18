@@ -13,6 +13,14 @@ public class GameManager : SingletonBehaviour <GameManager> {
 	private bool [] _flags_b = new bool [7];
 	private bool _last_trun_a_selected = false;
 	private int _result = -1; //
+	private int _sored_key_idx = -1;
+	public int GetStoredKeyIndex () {
+		if (_sored_key_idx > 100) {
+			return _sored_key_idx - 93;
+		} else {
+			return _sored_key_idx;
+		}
+	}
 	private AudioSource _se;
 	private Dictionary <string, string> _neighborhood_list  = new Dictionary<string, string> () {
         {"R", "DFT"},
@@ -65,6 +73,10 @@ public class GameManager : SingletonBehaviour <GameManager> {
 		_se.clip = _clips [se_idx];
 		_se.Play ();
 	}
+	private void PlaySeKey (int se_idx) {
+		_se.clip = _clips_key [se_idx];
+		_se.Play ();
+	}
 	private void PutTreasure (string key) {
 		int idx = GetKeyIndex (key);
 		if (idx == -1) {
@@ -112,6 +124,7 @@ public class GameManager : SingletonBehaviour <GameManager> {
 			Debug.Log ("ERROR");
 			return false;
 		}
+		_sored_key_idx = idx;
 		if (idx < 100) {
 			if (_flags_a [idx]) {
 				// 成功
@@ -215,6 +228,11 @@ public class GameManager : SingletonBehaviour <GameManager> {
 			}
 			// key
 			if (IsInRange (DownKeyCheck ())) {
+
+				int idx = GetKeyIndex (DownKeyCheck ());
+				if (idx > 100) idx -= 93;
+				PlaySeKey (idx);
+
 				if (Hit (DownKeyCheck ())) {
 					// 成功
 					_result = 1;
@@ -243,6 +261,11 @@ public class GameManager : SingletonBehaviour <GameManager> {
 			}
 			// key
 			if (IsInRange (DownKeyCheck ())) {
+
+				int idx = GetKeyIndex (DownKeyCheck ());
+				if (idx > 100) idx -= 93;
+				PlaySeKey (idx);
+				
 				if (Hit (DownKeyCheck ())) {
 					// 成功
 					_result = 1;

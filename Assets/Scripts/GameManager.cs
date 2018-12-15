@@ -15,7 +15,8 @@ public class GameManager : SingletonBehaviour <GameManager> {
 	private int _result = -1; //
 	private int _sored_key_idx = -1;
 	public int GetStoredKeyIndex () {
-		if (_sored_key_idx > 100) {
+		if (_sored_key_idx >= 100) {
+			Debug.Log (_sored_key_idx - 93);
 			return _sored_key_idx - 93;
 		} else {
 			return _sored_key_idx;
@@ -231,6 +232,9 @@ public class GameManager : SingletonBehaviour <GameManager> {
 
 				int idx = GetKeyIndex (DownKeyCheck ());
 				if (idx > 100) idx -= 93;
+
+
+
 				PlaySeKey (idx);
 
 				if (Hit (DownKeyCheck ())) {

@@ -5,7 +5,6 @@ using UnityEngine;
 public class GameManagerInterface : SingletonBehaviour <GameManagerInterface> {
 	void Start () {}
 	void Update () {
-		Debug.Log (GetLastPusedKey ());
 	}
 	public GameState GetGameState () {
 		return GameManager.Instance.GetGameState ();

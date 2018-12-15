@@ -4,17 +4,16 @@ using UnityEngine;
 using System;
 using UnityEngine.SceneManagement;
 
-public class GameManager : MonoBehaviour {
+public class GameManager : SingletonBehaviour <GameManager> {
 	private GameState _state = GameState.Title;
 	private bool [] _flags_a = new bool [3];
 	private bool [] _flags_b = new bool [3];
+	public GameState GetGameState () {
+		return _state;
+	}
 	void Start () {
 		Debug.Log (_state);
 		Clear ();
-		// TempSet ();
-
-		// ChangeKeyState ("A", false);
-		// ChangeKeyState ("S", false);
 	}
 	public void Clear () {
 		for (int idx = 0; idx < _flags_a.Length; idx++) {
@@ -42,8 +41,6 @@ public class GameManager : MonoBehaviour {
 		if (key == "E") {_flags_b [2] = flag; return true;}
 		return false;
 	}
-	
-	// Update is called once per frame
 	void Update () {
 		// -------------------------------------------
 		// Title

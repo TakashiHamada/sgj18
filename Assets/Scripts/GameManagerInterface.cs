@@ -6,12 +6,12 @@ public class GameManagerInterface : SingletonBehaviour <GameManagerInterface> {
 	void Start () {}
 	void Update () {}
 	public GameState GetGameState () {
-		return GameState.Title;
+		return GameManager.Instance.GetGameState ();
 	}
 	public int GetScoreA () {
-		return 0;
+		return GameManager.Instance.GetFlagUpCount (0);
 	}
 	public int GetScoreB () {
-		return 0;
+		return GameManager.Instance.GetFlagUpCount (1);
 	}
 }

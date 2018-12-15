@@ -15,8 +15,12 @@ public class DesplayManager : MonoBehaviour {
 		if (GameManagerInterface.Instance.GetGameState().ToString() == "Preparing"){
 			_title_root.SetActive  (false);
 			_game_root.SetActive   (true);
-		} else (GameManagerInterface.Instance.GetGameState().ToString() == "GameEnd");
+		} else if (GameManagerInterface.Instance.GetGameState().ToString() == "GameEnd"){
 			_game_root.SetActive   (false);
 			_result_root.SetActive (true);
+		} else if (GameManagerInterface.Instance.GetGameState().ToString() == "Title"){
+			_title_root.SetActive  (true);
+			_game_root.SetActive   (false);
+		}
 	}
 }

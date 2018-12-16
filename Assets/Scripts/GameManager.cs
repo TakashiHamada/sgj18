@@ -125,13 +125,20 @@ public class GameManager : SingletonBehaviour <GameManager> {
 			PlaySe (11);
 		}
 		if (DownKeyCheck () == "") return;
+		// 何か押されたが範囲外？
+		if (IsInRange (DownKeyCheck (), 0) == false) {
+			Debug.Log ("OUT OF RANGE");
+			PlaySe (0);
+			return;
+		}
 		// 確認
 		if (IsInRange (DownKeyCheck (), _last_trun_a_selected ? 1 : 2)) {
-			if (Hit (DownKeyCheck ())) {
+			// ヒットじゃだめ　結果のみ
+			if (Check (DownKeyCheck ())) {
 				Debug.Log ("Exsited");
 				PlaySe (1);
 			}
-		}
+		} else
 		// 攻撃
 		if (IsInRange (DownKeyCheck (), _last_trun_a_selected ? 2 : 1)) {
 			PrepareToAttack ();
@@ -236,6 +243,15 @@ public class GameManager : SingletonBehaviour <GameManager> {
 		if (flag [idx]) {
 			// 成功
 			flag [idx] = false;
+			return true;
+		}
+		return false;
+	}
+	private bool Check (string key) {
+		int idx  = ParseIndex (GetKeyIndex (key));
+		var flag = GetFlag    (GetKeyIndex (key));
+		if (flag [idx]) {
+			// 成功
 			return true;
 		}
 		return false;

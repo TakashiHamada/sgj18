@@ -38,13 +38,16 @@ public class GameManager : SingletonBehaviour <GameManager> {
 		// Preparing
 		// -------------------------------------------
 		if (_state == GameState.Preparing) {
+			if (DownKeyCheck () == "") return;
 			// key
-			if (IsInRange (DownKeyCheck ())) {
+			if (IsInRange (DownKeyCheck (), 0)) {
 				PutTreasure (DownKeyCheck ());
+			} else {
+				PlaySe (0);
 			}
 			if (IsCompletedPreparation ()) {
 				Debug.Log ("Move to GameStartWait");
-				PlaySe (2);
+				PlaySe (7);
 				StartCoroutine ("GameStartWait");
 			}
 		} else
@@ -112,18 +115,33 @@ public class GameManager : SingletonBehaviour <GameManager> {
 			_state = GameState.GameTurnA;
 		}
 	}
+	// -------------------------------------------
+	// GameTurn の主処理
+	// -------------------------------------------
 	private void GameTurnUpdate () {
 		if (IsGameEnd ()) {
 			_state = GameState.GameEnd;
 			Debug.Log ("Move to End");
 			PlaySe (11);
 		}
-		if (IsInRange (DownKeyCheck ())) {
-			int idx = GetKeyIndex (DownKeyCheck ());
-			if (idx > 99) idx -= 93;
-			PlaySeKey (idx);
-			// 最後に押されたキーを保存
-			_sored_key_idx = GetKeyIndex (DownKeyCheck ());
+		if (DownKeyCheck () == "") return;
+		// 何か押されたが範囲外？
+		if (IsInRange (DownKeyCheck (), 0) == false) {
+			Debug.Log ("OUT OF RANGE");
+			PlaySe (0);
+			return;
+		}
+		// 確認
+		if (IsInRange (DownKeyCheck (), _last_trun_a_selected ? 1 : 2)) {
+			// ヒットじゃだめ　結果のみ
+			if (Check (DownKeyCheck ())) {
+				Debug.Log ("Exsited");
+				PlaySe (1);
+			}
+		} else
+		// 攻撃
+		if (IsInRange (DownKeyCheck (), _last_trun_a_selected ? 2 : 1)) {
+			PrepareToAttack ();
 			if (Hit (DownKeyCheck ())) {
 				_result = 1; // 成功
 			} else {
@@ -136,6 +154,12 @@ public class GameManager : SingletonBehaviour <GameManager> {
 			Debug.Log ("Move to GameReactionWait");
 			StartCoroutine ("GameReactionWait");
 		}
+	}
+	private void PrepareToAttack () {
+		int idx = GetKeyIndex (DownKeyCheck ());
+		if (idx > 99) idx -= 93;
+		PlaySeKey (idx);
+		_sored_key_idx = idx; // 画像部連絡用
 	}
 	public int GetStoredKeyIndex () {
 		return _sored_key_idx > 99 ? _sored_key_idx - 93 : _sored_key_idx;
@@ -178,13 +202,14 @@ public class GameManager : SingletonBehaviour <GameManager> {
 		}
 		return neighborhoods;
 	}
-	private bool IsInRange (string key) {
+	private bool IsInRange (string key, int mask_type) {
 		if (key == "") return false;
-		string valid_keys = "RTDFGCVUIHJKNM";
+		string valid_keys = mask_type == 0 ? "RTDFGCVUIHJKNM" :
+							mask_type == 1 ? "RTDFGCV" :
+							mask_type == 2 ? "UIHJKNM" : "";
 		for (int idx = 0; idx < valid_keys.Length; idx++) {
 			if (valid_keys [idx] == key [0]) return true;
 		}
-		PlaySe (0);
 		return false;
 	}
 	private void PlaySe (int se_idx) {
@@ -218,6 +243,15 @@ public class GameManager : SingletonBehaviour <GameManager> {
 		if (flag [idx]) {
 			// 成功
 			flag [idx] = false;
+			return true;
+		}
+		return false;
+	}
+	private bool Check (string key) {
+		int idx  = ParseIndex (GetKeyIndex (key));
+		var flag = GetFlag    (GetKeyIndex (key));
+		if (flag [idx]) {
+			// 成功
 			return true;
 		}
 		return false;

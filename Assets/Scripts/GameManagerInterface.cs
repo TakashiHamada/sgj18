@@ -15,7 +15,7 @@ public class GameManagerInterface : SingletonBehaviour <GameManagerInterface> {
 	public int GetScoreB () {
 		return GameManager.Instance.GetFlagUpCount (1);
 	}
-	public int GetLastPusedKey () {
+	public int GetLastPushedKeyIndex () {
 		return GameManager.Instance.GetStoredKeyIndex ();
 	}
 }

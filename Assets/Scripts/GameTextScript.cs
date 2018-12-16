@@ -14,9 +14,9 @@ public class GameTextScript : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
 		if (GameManagerInterface.Instance.GetGameState().ToString() == "GameTurnA"){
-			myText.text = "A側のターン";
+			myText.text = "1Playerのターン";
 		}else if (GameManagerInterface.Instance.GetGameState().ToString() == "GameTurnB"){
-			myText.text = "B側のターン";
+			myText.text = "2Playerのターン";
 		}
 	}
 }

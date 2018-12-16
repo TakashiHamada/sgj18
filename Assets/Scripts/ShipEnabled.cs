@@ -27,72 +27,90 @@ public class ShipEnabled : MonoBehaviour {
 
 	public int PlayerAScore;
 	public int PlayerBScore;
+	public int KeyIndex;
 	void Start () {
 		PlayerAScore = 3;
 		PlayerBScore = 3;
+		KeyIndex = GameManagerInterface.Instance.GetLastPushedKeyIndex ();
+		_ship1.GetComponent <Image>().enabled = false;
+		_ship2.GetComponent <Image>().enabled = false;
+		_ship3.GetComponent <Image>().enabled = false;
+		_ship4.GetComponent <Image>().enabled = false;
+		_ship5.GetComponent <Image>().enabled = false;
+		_ship6.GetComponent <Image>().enabled = false;
+		_ship7.GetComponent <Image>().enabled = false;
+		_ship8.GetComponent <Image>().enabled = false;
+		_ship9.GetComponent <Image>().enabled = false;
+		_ship10.GetComponent <Image>().enabled = false;
+		_ship11.GetComponent <Image>().enabled = false;
+		_ship12.GetComponent <Image>().enabled = false;
+		_ship13.GetComponent <Image>().enabled = false;
+		_ship14.GetComponent <Image>().enabled = false;
 	}
 	void Update () {
-		if(PlayerAScore < GameManagerInterface.Instance.GetScoreA()){
-			_player_a_normal.SetActive  (false);
-			_player_a_happy.SetActive  (false);
-			_player_a_shock.SetActive  (true);
-			_player_b_normal.SetActive  (false);
-			_player_b_happy.SetActive  (true);
-			_player_b_shock.SetActive  (false);
-			PlayerAScore = GameManagerInterface.Instance.GetScoreA();
-		} else if (PlayerBScore < GameManagerInterface.Instance.GetScoreB()){
-			_player_a_normal.SetActive  (false);
-			_player_a_happy.SetActive  (true);
-			_player_a_shock.SetActive  (false);
-			_player_b_normal.SetActive  (false);
-			_player_b_happy.SetActive  (false);
-			_player_b_shock.SetActive  (true);
-			PlayerBScore = GameManagerInterface.Instance.GetScoreB();
-		}
-		switch(GameManagerInterface.Instance.GetLastPushedKeyIndex ())
-		{
-			case 0:
-				_ship1.SetActive  (true);
-				break;
-			case 1:
-				_ship2.SetActive  (true);
-				break;
-			case 2:
-				_ship3.SetActive  (true);
-				break;
-			case 3:
-				_ship4.SetActive  (true);
-				break;
-			case 4:
-				_ship5.SetActive  (true);
-				break;
-			case 5:
-				_ship6.SetActive  (true);
-				break;
-			case 6:
-				_ship7.SetActive  (true);
-				break;
-			case 7:
-				_ship8.SetActive  (true);
-				break;
-			case 8:
-				_ship9.SetActive  (true);
-				break;
-			case 9:
-				_ship10.SetActive  (true);
-				break;
-			case 10:
-				_ship11.SetActive  (true);
-				break;
-			case 11:
-				_ship12.SetActive  (true);
-				break;
-			case 12:
-				_ship13.SetActive  (true);
-				break;
-			case 13:
-				_ship14.SetActive  (true);
-				break;
+		if(GameManagerInterface.Instance.GetLastPushedKeyIndex () != KeyIndex){
+			switch(GameManagerInterface.Instance.GetLastPushedKeyIndex ())
+			{
+				case 0:
+					_ship1.GetComponent <Image>().enabled = true;
+					StartCoroutine ("HideShip", _ship1);
+					break;
+				case 1:
+					_ship2.GetComponent <Image>().enabled = true;
+					StartCoroutine ("HideShip", _ship2);
+					break;
+				case 2:
+					_ship3.GetComponent <Image>().enabled = true;
+					StartCoroutine ("HideShip", _ship3);
+					break;
+				case 3:
+					_ship4.GetComponent <Image>().enabled = true;
+					StartCoroutine ("HideShip", _ship4);
+					break;
+				case 4:
+					_ship5.GetComponent <Image>().enabled = true;
+					StartCoroutine ("HideShip", _ship5);
+					break;
+				case 5:
+					_ship6.GetComponent <Image>().enabled = true;
+					StartCoroutine ("HideShip", _ship6);
+					break;
+				case 6:
+					_ship7.GetComponent <Image>().enabled = true;
+					StartCoroutine ("HideShip", _ship7);
+					break;
+				case 7:
+					_ship8.GetComponent <Image>().enabled = true;
+					StartCoroutine ("HideShip", _ship8);
+					break;
+				case 8:
+					_ship9.GetComponent <Image>().enabled = true;
+					StartCoroutine ("HideShip", _ship9);
+					break;
+				case 9:
+					_ship10.GetComponent <Image>().enabled = true;
+					StartCoroutine ("HideShip", _ship10);
+					break;
+				case 10:
+					_ship11.GetComponent <Image>().enabled = true;
+					StartCoroutine ("HideShip", _ship11);
+					break;
+				case 11:
+					_ship12.GetComponent <Image>().enabled = true;
+					StartCoroutine ("HideShip", _ship12);
+					break;
+				case 12:
+					_ship13.GetComponent <Image>().enabled = true;
+					StartCoroutine ("HideShip", _ship13);
+					break;
+				case 13:
+					_ship14.GetComponent <Image>().enabled = true;
+					StartCoroutine ("HideShip", _ship14);
+					break;
+				default:
+					KeyIndex = GameManagerInterface.Instance.GetLastPushedKeyIndex();
+					break;
+			}
 		}
 		// 例
 		// StartCoroutine ("HideShip", _ship10);

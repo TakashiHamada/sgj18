@@ -31,7 +31,7 @@ public class GameManager : SingletonBehaviour <GameManager> {
 			if (Input.GetKey (KeyCode.Space)) {
 				_state = GameState.Preparing;
 				Debug.Log ("Move to Preparing");
-				PlaySe (2);
+				PlaySe (11);
 			}
 		} else
 		// -------------------------------------------
@@ -122,7 +122,7 @@ public class GameManager : SingletonBehaviour <GameManager> {
 		if (IsGameEnd ()) {
 			_state = GameState.GameEnd;
 			Debug.Log ("Move to End");
-			PlaySe (11);
+			PlaySe (2);
 		}
 		if (DownKeyCheck () == "") return;
 		// 何か押されたが範囲外？

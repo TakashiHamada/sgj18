@@ -94,6 +94,12 @@ public class ShipEnabled : MonoBehaviour {
 				_ship14.SetActive  (true);
 				break;
 		}
+		// 例
+		// StartCoroutine ("HideShip", _ship10);
 	}
-
+	// 一定時間後に船を隠す
+	IEnumerator HideShip (GameObject ship) {
+		yield return new WaitForSeconds (1.5f);
+		ship.SetActive (false);
+	}
 }

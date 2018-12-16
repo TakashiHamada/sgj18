@@ -31,7 +31,7 @@ public class GameManager : SingletonBehaviour <GameManager> {
 			if (Input.GetKey (KeyCode.Space)) {
 				_state = GameState.Preparing;
 				Debug.Log ("Move to Preparing");
-				PlaySe (2);
+				PlaySe (17);
 			}
 		} else
 		// -------------------------------------------
@@ -47,7 +47,7 @@ public class GameManager : SingletonBehaviour <GameManager> {
 			}
 			if (IsCompletedPreparation ()) {
 				Debug.Log ("Move to GameStartWait");
-				PlaySe (7);
+				PlaySe (16);
 				StartCoroutine ("GameStartWait");
 			}
 		} else
@@ -79,9 +79,9 @@ public class GameManager : SingletonBehaviour <GameManager> {
 	// -------------------------------------------
 	IEnumerator GameStartWait () {
 		_state = GameState.GameStartWait;
-		yield return new WaitForSeconds (1f);
+		yield return new WaitForSeconds (3f);
 		Debug.Log ("Move to GameTurnA");
-		PlaySe (2);
+		PlaySe (12);
 		_state = GameState.GameTurnA;
 	}
 	// -------------------------------------------
@@ -96,23 +96,28 @@ public class GameManager : SingletonBehaviour <GameManager> {
 			// 失敗
 			PlaySe (0);
 			Debug.Log ("NG");
+			yield return new WaitForSeconds (1f);
 		} else
 		if (_result == 1) {
 			// 成功
 			PlaySe (7);
 			Debug.Log ("GOOD");
+			yield return new WaitForSeconds (1f);
 		} else
 		if (_result == 2){
 			// 近く
 			PlaySe (5);
 			Debug.Log ("NEAR");
+			yield return new WaitForSeconds (1f);
 		}
 		if (_last_trun_a_selected) {
 			Debug.Log ("Move to GameTurnB");
 			_state = GameState.GameTurnB;
+			PlaySe (14);
 		} else {
 			Debug.Log ("Move to GameTurnA");
 			_state = GameState.GameTurnA;
+			PlaySe (12);
 		}
 	}
 	// -------------------------------------------
@@ -122,7 +127,7 @@ public class GameManager : SingletonBehaviour <GameManager> {
 		if (IsGameEnd ()) {
 			_state = GameState.GameEnd;
 			Debug.Log ("Move to End");
-			PlaySe (11);
+			StartCoroutine ("PlaySeJudgement");
 		}
 		if (DownKeyCheck () == "") return;
 		// 何か押されたが範囲外？
@@ -153,6 +158,18 @@ public class GameManager : SingletonBehaviour <GameManager> {
 			}
 			Debug.Log ("Move to GameReactionWait");
 			StartCoroutine ("GameReactionWait");
+		}
+	}
+	IEnumerator PlaySeJudgement () {
+		PlaySe (2);
+		yield return new WaitForSeconds (1f);
+		// 1の勝ち
+		if (GetFlagUpCount (1) == 0) {
+			PlaySe (13);
+		} else
+		// 2の勝ち
+		if (GetFlagUpCount (0) == 0) {
+			PlaySe (15);
 		}
 	}
 	private void PrepareToAttack () {
